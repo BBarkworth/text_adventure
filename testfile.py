@@ -82,6 +82,13 @@ class Testclasses(unittest.TestCase):
         test_troll = troll() 
         self.assertEqual(test_troll.damage_taken(30, 50), (45, 0))
         self.assertEqual(test_troll.damage_taken(25,0), (20, 0))
+    
+    def test_interactions(self):
+        test_soldier = soldier()
+        test_mage = mage()
+        test_goblin = goblin()
+        test_troll = troll()
+        self.assertEqual(test_soldier.damage_taken(test_goblin.attack), (70,50))
 
 if __name__=='__main__':
 	unittest.main()

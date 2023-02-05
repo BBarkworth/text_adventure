@@ -1,4 +1,5 @@
 import random
+import time
 
 class soldier:
     def __init__(self):
@@ -10,13 +11,14 @@ class soldier:
     
     def quick_attack(self):
         health_damage = 40
-        return health_damage
-    # link in with random chance of doing another quick attack if
-    # fake dice roll is above 6
+        armour_damage = 0
+        num = random.randint(1,12)
+        if num > 6:
+            return health_damage * 2
+        return health_damage, armour_damage
 
     def power_attack(self):
-        health_damage = 25
-        # make health damage higher?
+        health_damage = 35
         armour_damage = 25
         return health_damage, armour_damage
 
@@ -43,19 +45,22 @@ class soldier:
         if self.health <= 0:
             return "Dead"
         print("You have {} health and {} armour remaining".format(self.health, self.armour))
+
+    def attack_information(self):
         print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
 
-    def attack_choice(self, choice):
+    def attack_choice(self):
+        choice = input("Choose which attack to use. Press 1 for quick attack, 2 for power attack or 3 for more information: ")
         if choice == "1":
             outcome = self.quick_attack()
         elif choice == "2":
             outcome = self.power_attack()
         elif choice == "3":
-            outcome = self.information()
+            outcome = self.attack_information()
             self.attack_choice()
         else:
-            print("Please input a number between 1 and 3")
             self.attack_choice()
+        print(outcome)
         return outcome
 
 class mage:
@@ -77,8 +82,10 @@ class mage:
         health_damage = 40 * opponent_num
         armour_damage = 10 * opponent_num
         return health_damage, armour_damage
+        # this needs to be applied to all enemies, could use enemy list(?)
+        # take out opponent num argument and apply enemy num elsewhere?
 
-    def damage_taken(self, num, armour_num):
+    def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
             raise ValueError
         self.health = self.health - (num * 1.5)
@@ -99,21 +106,25 @@ class mage:
     
     def information(self):
         if self.health <= 0:
-            return "The player has died"
-        print("You have {self.health} remaining and {self.armour} armour remaining")
-        print("Your magic attack does 100 health damage and 20 armour damage, whereas, the splash damage attack does 40 health damage and 10 armour damage for each enemy")
-    
-    def attack_choice(self, choice):
+            return "Dead"
+        return "You have {self.health} remaining and {self.armour} armour remaining"
+
+    def attack_information(self):
+        print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
+
+    def attack_choice(self):
+        choice = input("Choose which attack to use. Press 1 for magic attack, 2 for splash damage attack or 3 for more information: ")
         if choice == "1":
             outcome = self.magic_attack()
         elif choice == "2":
             outcome = self.splash_damage_attack()
         elif choice == "3":
-            outcome = self.information()
+            outcome = self.attack_information()
             self.attack_choice()
         else:
             print("Please input a number between 1 and 3")
             self.attack_choice()
+        print(outcome)
         return outcome
 
 class goblin:
@@ -131,6 +142,7 @@ class goblin:
         if armour_num > 0:
             self.health -= armour_num
         if self.health <= 0:
+            time.sleep(1)
             print("The goblin has been vanquished")
         return self.health
 
@@ -138,7 +150,6 @@ class goblin:
         if self.health <= 0:
             return "Dead"
         return self.health
-        # expand information out
 
 class troll:
     def __init__(self):
@@ -151,7 +162,6 @@ class troll:
         return health_damage, armour_damage
 
     def close_to_death(self):
-        #if random.randint(1,12) > 6: # include this in attack function?
         health_damage = 50
         armour_damage = 10
         return health_damage, armour_damage
@@ -179,7 +189,18 @@ class troll:
         if self.health <= 0:
             return "Dead"
         return self.health, self.armour
-        # expand information out
+
+    def attack_choice(self):
+        if self.health < 30:
+            num = random.randint(1,12)
+            if num > 6: 
+                outcome = self.close_to_death()
+                return outcome
+            else:
+                outcome = self.main_attack()
+                return outcome
+        outcome = self.main_attack()
+        return outcome
 
     # make health private?
     # include orc class? include method to kill other orc if number over 9 rolled?
