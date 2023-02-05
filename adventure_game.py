@@ -41,8 +41,22 @@ class soldier:
 
     def information(self):
         if self.health <= 0:
-            return 0
+            return "Dead"
         print("You have {} health and {} armour remaining".format(self.health, self.armour))
+        print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
+
+    def attack_choice(self, choice):
+        if choice == "1":
+            outcome = self.quick_attack()
+        elif choice == "2":
+            outcome = self.power_attack()
+        elif choice == "3":
+            outcome = self.information()
+            self.attack_choice()
+        else:
+            print("Please input a number between 1 and 3")
+            self.attack_choice()
+        return outcome
 
 class mage:
     def __init__(self):
@@ -87,6 +101,20 @@ class mage:
         if self.health <= 0:
             return "The player has died"
         print("You have {self.health} remaining and {self.armour} armour remaining")
+        print("Your magic attack does 100 health damage and 20 armour damage, whereas, the splash damage attack does 40 health damage and 10 armour damage for each enemy")
+    
+    def attack_choice(self, choice):
+        if choice == "1":
+            outcome = self.magic_attack()
+        elif choice == "2":
+            outcome = self.splash_damage_attack()
+        elif choice == "3":
+            outcome = self.information()
+            self.attack_choice()
+        else:
+            print("Please input a number between 1 and 3")
+            self.attack_choice()
+        return outcome
 
 class goblin:
     def __init__(self):
@@ -122,7 +150,11 @@ class troll:
         armour_damage = 25
         return health_damage, armour_damage
 
-    # add attack based on health below a certain point e.g. desperation attack
+    def close_to_death(self):
+        #if random.randint(1,12) > 6: # include this in attack function?
+        health_damage = 50
+        armour_damage = 10
+        return health_damage, armour_damage
 
     def damage_taken(self, num, armour_num):
         if num < 0 or armour_num < 0:
@@ -153,4 +185,3 @@ class troll:
     # include orc class? include method to kill other orc if number over 9 rolled?
     # include level up ability after kills = more health/armour?
     # include ability to leave before fighing more enemies??
-    # create repo?
