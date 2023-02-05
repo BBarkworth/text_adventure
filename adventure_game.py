@@ -9,12 +9,11 @@ class soldier:
     def __repr__(self):
         return 'soldier'
     
-    def quick_attack(self):
+    def quick_attack(self, num):
         health_damage = 40
         armour_damage = 0
-        num = random.randint(1,12)
         if num > 6:
-            return health_damage * 2
+            return health_damage * 2, armour_damage
         return health_damage, armour_damage
 
     def power_attack(self):
@@ -44,7 +43,7 @@ class soldier:
     def information(self):
         if self.health <= 0:
             return "Dead"
-        print("You have {} health and {} armour remaining".format(self.health, self.armour))
+        return "You have {} health and {} armour remaining".format(self.health, self.armour)
 
     def attack_information(self):
         print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
@@ -52,7 +51,8 @@ class soldier:
     def attack_choice(self):
         choice = input("Choose which attack to use. Press 1 for quick attack, 2 for power attack or 3 for more information: ")
         if choice == "1":
-            outcome = self.quick_attack()
+            num = random.randint(1,12)
+            outcome = self.quick_attack(num)
         elif choice == "2":
             outcome = self.power_attack()
         elif choice == "3":
@@ -107,7 +107,7 @@ class mage:
     def information(self):
         if self.health <= 0:
             return "Dead"
-        return "You have {self.health} remaining and {self.armour} armour remaining"
+        return "You have {} health and {} armour remaining".format(self.health, self.armour)
 
     def attack_information(self):
         print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
@@ -143,13 +143,14 @@ class goblin:
             self.health -= armour_num
         if self.health <= 0:
             time.sleep(1)
-            print("The goblin has been vanquished")
+            return "The goblin has been vanquished"
         return self.health
 
     def information(self):
         if self.health <= 0:
             return "Dead"
         return self.health
+        # needs altering - include goblin name(?) and above info
 
 class troll:
     def __init__(self):
@@ -189,6 +190,7 @@ class troll:
         if self.health <= 0:
             return "Dead"
         return self.health, self.armour
+        # needs altering - include troll name(?) and above info
 
     def attack_choice(self):
         if self.health < 30:
