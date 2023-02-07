@@ -2,9 +2,13 @@ import random
 import time
 
 class soldier:
-    def __init__(self):
+    def __init__(self, name):
         self.health = 100
         self.armour = 50
+        self.name = name
+        self.current_level = 1
+        self.original_health = self.health
+        self.original_armour = self.armour
     
     def __repr__(self):
         return 'soldier'
@@ -62,11 +66,22 @@ class soldier:
             self.attack_choice()
         print(outcome)
         return outcome
+    
+    def level_up(self):
+        self.original_health = self.original_health + 25
+        self.original_armour = self.original_armour + 25
+        self.health = self.original_health
+        self.armour = self.original_armour
+        self.current_level = self.current_level + 1
+        print("You are now level {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
 
 class mage:
-    def __init__(self):
+    def __init__(self, name):
         self.health = 50
         self.armour = 20
+        self.name = name
+        self.original_health = self.health
+        self.original_armour = self.armour
 
     def __repr__(self):
         return 'mage'
@@ -76,14 +91,14 @@ class mage:
         armour_damage = 20
         return health_damage, armour_damage
     
-    def splash_damage_attack(self, opponent_num):
-        if opponent_num <= 0:
+    def splash_damage_attack(self, enemy_list):
+        if len(enemy_list) <= 0:
             raise ValueError
-        health_damage = 40 * opponent_num
-        armour_damage = 10 * opponent_num
-        return health_damage, armour_damage
-        # this needs to be applied to all enemies, could use enemy list(?)
-        # take out opponent num argument and apply enemy num elsewhere?
+        health_damage = 40
+        armour_damage = 10
+        for i in enemy_list:
+            i.damage_taken(enemy_list, health_damage, armour_damage)
+        return 0, 0
 
     def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
@@ -127,35 +142,46 @@ class mage:
         print(outcome)
         return outcome
 
+    def level_up(self):
+        self.original_health = self.original_health + 25
+        self.original_armour = self.original_armour + 25
+        self.health = self.original_health
+        self.armour = self.original_armour
+        self.current_level = self.current_level + 1
+        print("You are now level {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
+
 class goblin:
-    def __init__(self):
+    def __init__(self, name, enemies_list):
         self.health = 25
+        self.name = name
+        enemies_list.append(self)
     
     def attack(self):
         health_damage = 25
         return health_damage
 
-    def damage_taken(self, num, armour_num=0):
+    def damage_taken(self, enemy_list, num, armour_num=0):
         if num < 0 or armour_num < 0:
             raise ValueError
         self.health = self.health - num
         if armour_num > 0:
             self.health -= armour_num
         if self.health <= 0:
-            time.sleep(1)
-            return "The goblin has been vanquished"
+            enemy_list.remove(self)
+            return 0
         return self.health
 
     def information(self):
         if self.health <= 0:
-            return "Dead"
+            return "The {} is dead".format(self.name)
         return self.health
-        # needs altering - include goblin name(?) and above info
 
 class troll:
-    def __init__(self):
+    def __init__(self, name, enemies_list):
         self.health = 75
         self.armour = 50
+        self.name = name
+        enemies_list.append(self)
     
     def main_attack(self):
         health_damage = 30
@@ -167,7 +193,7 @@ class troll:
         armour_damage = 10
         return health_damage, armour_damage
 
-    def damage_taken(self, num, armour_num):
+    def damage_taken(self, enemy_list, num, armour_num):
         if num < 0 or armour_num < 0:
             raise ValueError
         self.health = self.health - num
@@ -179,18 +205,19 @@ class troll:
                     self.armour = 0
                 self.health -= remaining_damage
                 if self.health <= 0:
-                    return "The troll has been conquered"
+                    enemy_list.remove(self)
+                    return 0
             else:
                 self.armour = self.armour - armour_num
         if self.health <= 0:
-            return "The troll has been conquered"
+            enemy_list.remove(self)
+            return 0
         return self.health, self.armour
 
     def information(self):
         if self.health <= 0:
-            return "Dead"
+            return "The {} is dead".format(self.name)
         return self.health, self.armour
-        # needs altering - include troll name(?) and above info
 
     def attack_choice(self):
         if self.health < 30:
@@ -204,7 +231,4 @@ class troll:
         outcome = self.main_attack()
         return outcome
 
-    # make health private?
     # include orc class? include method to kill other orc if number over 9 rolled?
-    # include level up ability after kills = more health/armour?
-    # include ability to leave before fighing more enemies??
