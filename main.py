@@ -18,6 +18,10 @@ def player_choice():
         print("You're playing as a soldier because you didn't pick one of the class options")
     return player
 
+def enemy_spawn():
+    pass
+    # add random percentages for enemies
+
 if __name__=='__main__':
     player = player_choice()
     enemy_list = []
@@ -27,7 +31,8 @@ if __name__=='__main__':
         print("Look out, a goblin has appeared")
         time.sleep(1.5)
         while goblin_one.health > 0:
-            player_attack = player.attack_choice()
+            choice = input("Choose which attack to use. Press 1 for quick attack, 2 for power attack or 3 for more information: ")
+            player_attack = player.attack_choice(choice)
             goblin_one.damage_taken(player_attack[0],player_attack[1])
             goblin_attack = goblin_one.attack()
             player.damage_taken(goblin_attack)
@@ -55,6 +60,5 @@ if __name__=='__main__':
     else:
         print("You were slain")
 
-# add multiple players option
+# add multiple players option - player list and loop?
 # put main script in try/except statement to loop back for multi playthroughs?
-# random option for spawning enemies?

@@ -50,6 +50,13 @@ class Testclasses(unittest.TestCase):
             test_troll.damage_taken(enemy_list, -10, 0)
         with self.assertRaises(ValueError):
             test_troll.damage_taken(enemy_list, 50, -20)
+        test_orc = orc("orc_one", enemy_list)
+        with self.assertRaises(ValueError):
+            test_orc.damage_taken(enemy_list, -5, 0)
+        with self.assertRaises(ValueError):
+            test_orc.damage_taken(enemy_list, 50, -5)
+        with self.assertRaises(ValueError):
+            test_orc.damage_taken(enemy_list, 0, -43)
         # type errors/ input checks?
 
     def test_mage(self):
@@ -105,6 +112,22 @@ class Testclasses(unittest.TestCase):
         attack = test_goblin.attack()
         self.assertEqual(test_soldier.damage_taken(attack), (75,50))
         # add more
+    
+    def test_orc(self):
+        enemy_list = []
+        test_orc = orc("test_orc", enemy_list)
+        other_orc = orc("other_orc", enemy_list)
+        self.assertEqual(test_orc.main_attack(), (35, 15))
+        self.assertEqual(test_orc.survival_of_the_fittest(other_orc, enemy_list), "Infighting has broken out between the orcs and {} has killed his brother".format(test_orc.name))
+        self.assertEqual(test_orc.information(), (50,50))
+        self.assertEqual(test_orc.damage_taken(enemy_list, 25, 25), (25, 25))
+        self.assertEqual(test_orc.damage_taken(enemy_list, 0, 25), (25, 0))
+        self.assertEqual(test_orc.damage_taken(enemy_list, 0, 25), 0)
+        test_orc = orc("orc_two", enemy_list)
+        self.assertEqual(test_orc.damage_taken(enemy_list, 50, 0), 0)
+        test_orc = orc("orc_three", enemy_list)
+        self.assertEqual(test_orc.damage_taken(enemy_list, 40, 20), (10,30))
+        self.assertEqual(test_orc.damage_taken(enemy_list, 30, 30), 0)
 
 if __name__=='__main__':
 	unittest.main()

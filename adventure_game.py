@@ -19,6 +19,7 @@ class soldier:
         if num > 6:
             return health_damage * 2, armour_damage
         return health_damage, armour_damage
+        # fix num implementation in main file
 
     def power_attack(self):
         health_damage = 35
@@ -52,8 +53,7 @@ class soldier:
     def attack_information(self):
         print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
 
-    def attack_choice(self):
-        choice = input("Choose which attack to use. Press 1 for quick attack, 2 for power attack or 3 for more information: ")
+    def attack_choice(self, choice):
         if choice == "1":
             num = random.randint(1,12)
             outcome = self.quick_attack(num)
@@ -127,8 +127,7 @@ class mage:
     def attack_information(self):
         print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
 
-    def attack_choice(self):
-        choice = input("Choose which attack to use. Press 1 for magic attack, 2 for splash damage attack or 3 for more information: ")
+    def attack_choice(self, choice):
         if choice == "1":
             outcome = self.magic_attack()
         elif choice == "2":
@@ -231,4 +230,56 @@ class troll:
         outcome = self.main_attack()
         return outcome
 
-    # include orc class? include method to kill other orc if number over 9 rolled?
+class orc:
+    def __init__(self, name, enemies_list):
+        self.health = 50
+        self.armour = 50
+        self.name = name
+        enemies_list.append(self)
+
+    def main_attack(self):
+        health_damage = 35
+        armour_damage = 15
+        return health_damage, armour_damage
+    
+    def damage_taken(self, enemy_list, health_num, armour_num):
+        if health_num < 0 or armour_num < 0:
+            raise ValueError
+        self.health = self.health - health_num
+        if armour_num > 0:
+            if armour_num > self.armour:
+                self.armour -= armour_num
+                remaining_damage = self.armour * -1
+                if self.armour < 0:
+                    self.armour = 0
+                self.health -= remaining_damage
+                if self.health <= 0:
+                    enemy_list.remove(self)
+                    return 0
+            else:
+                self.armour = self.armour - armour_num
+        if self.health <= 0:
+            enemy_list.remove(self)
+            return 0
+        return self.health, self.armour
+    
+    def survival_of_the_fittest(self, other_orc, enemy_list):
+        health_damage = 50
+        armour_damage = 50
+        other_orc.damage_taken(enemy_list, health_damage, armour_damage)
+        return "Infighting has broken out between the orcs and {} has killed his brother".format(self.name)
+        # print rather than return?
+
+    def information(self):
+        if self.health <= 0:
+            return "The {} is dead".format(self.name)
+        return self.health, self.armour
+
+    def attack_choice(self, orc_num):
+        num = random.randint(1,12)
+        if num > 9 and orc_num > 1:
+            outcome = self.survival_of_the_fittest()
+            return outcome
+        else:
+            outcome = self.main_attack()
+            return outcome
