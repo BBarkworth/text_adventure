@@ -1,5 +1,4 @@
 import random
-import time
 
 class soldier:
     def __init__(self, name):
@@ -13,18 +12,18 @@ class soldier:
     def __repr__(self):
         return 'soldier'
     
-    def quick_attack(self, num):
+    def quick_attack(self):
         health_damage = 40
         armour_damage = 0
+        num = random.randint(1,12)
         if num > 6:
             return health_damage * 2, armour_damage
         return health_damage, armour_damage
-        # fix num implementation in main file
 
     def power_attack(self):
         health_damage = 35
         armour_damage = 25
-        return health_damage, armour_damage
+        return (health_damage, armour_damage)
 
     def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
@@ -51,20 +50,15 @@ class soldier:
         return "You have {} health and {} armour remaining".format(self.health, self.armour)
 
     def attack_information(self):
-        print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
+        return "Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage"
 
-    def attack_choice(self, choice):
+    def attack_choice(self, choice, enemy_list):
         if choice == "1":
-            num = random.randint(1,12)
-            outcome = self.quick_attack(num)
+            outcome = self.quick_attack()
         elif choice == "2":
             outcome = self.power_attack()
-        elif choice == "3":
-            outcome = self.attack_information()
-            self.attack_choice()
         else:
-            self.attack_choice()
-        print(outcome)
+            return self.attack_information()
         return outcome
     
     def level_up(self):
@@ -80,6 +74,7 @@ class mage:
         self.health = 50
         self.armour = 20
         self.name = name
+        self.current_level = 1
         self.original_health = self.health
         self.original_armour = self.armour
 
@@ -97,8 +92,8 @@ class mage:
         health_damage = 40
         armour_damage = 10
         for i in enemy_list:
-            i.damage_taken(enemy_list, health_damage, armour_damage)
-        return 0, 0
+            i.damage_taken(health_damage, armour_damage)
+        return 0,0
 
     def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
@@ -125,20 +120,15 @@ class mage:
         return "You have {} health and {} armour remaining".format(self.health, self.armour)
 
     def attack_information(self):
-        print("Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage")
+        return "Your magic attack does 100 health damage and 20 armour damage, whereas, the splash damage attack does 40 health damage and 10 armour damage for each enemy"
 
-    def attack_choice(self, choice):
+    def attack_choice(self, choice, enemy_list):
         if choice == "1":
             outcome = self.magic_attack()
         elif choice == "2":
-            outcome = self.splash_damage_attack()
-        elif choice == "3":
-            outcome = self.attack_information()
-            self.attack_choice()
+            outcome = self.splash_damage_attack(enemy_list)
         else:
-            print("Please input a number between 1 and 3")
-            self.attack_choice()
-        print(outcome)
+            return self.attack_information()
         return outcome
 
     def level_up(self):
@@ -159,20 +149,20 @@ class goblin:
         health_damage = 25
         return health_damage
 
-    def damage_taken(self, enemy_list, num, armour_num=0):
+    def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
             raise ValueError
         self.health = self.health - num
         if armour_num > 0:
             self.health -= armour_num
         if self.health <= 0:
-            enemy_list.remove(self)
             return 0
         return self.health
 
-    def information(self):
+    def information(self, enemy_list):
         if self.health <= 0:
-            return "The {} is dead".format(self.name)
+            enemy_list.remove(self)
+            return "{} is dead".format(self.name)
         return self.health
 
 class troll:
@@ -192,7 +182,7 @@ class troll:
         armour_damage = 10
         return health_damage, armour_damage
 
-    def damage_taken(self, enemy_list, num, armour_num):
+    def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
             raise ValueError
         self.health = self.health - num
@@ -204,17 +194,16 @@ class troll:
                     self.armour = 0
                 self.health -= remaining_damage
                 if self.health <= 0:
-                    enemy_list.remove(self)
                     return 0
             else:
                 self.armour = self.armour - armour_num
         if self.health <= 0:
-            enemy_list.remove(self)
             return 0
         return self.health, self.armour
 
-    def information(self):
+    def information(self, enemy_list):
         if self.health <= 0:
+            enemy_list.remove(self)
             return "The {} is dead".format(self.name)
         return self.health, self.armour
 
@@ -231,18 +220,19 @@ class troll:
         return outcome
 
 class orc:
-    def __init__(self, name, enemies_list):
+    def __init__(self, name, enemies_list, orc_list):
         self.health = 50
         self.armour = 50
         self.name = name
         enemies_list.append(self)
+        orc_list.append(self)
 
     def main_attack(self):
         health_damage = 35
         armour_damage = 15
         return health_damage, armour_damage
     
-    def damage_taken(self, enemy_list, health_num, armour_num):
+    def damage_taken(self, health_num, armour_num=0):
         if health_num < 0 or armour_num < 0:
             raise ValueError
         self.health = self.health - health_num
@@ -254,31 +244,35 @@ class orc:
                     self.armour = 0
                 self.health -= remaining_damage
                 if self.health <= 0:
-                    enemy_list.remove(self)
                     return 0
             else:
                 self.armour = self.armour - armour_num
         if self.health <= 0:
-            enemy_list.remove(self)
             return 0
         return self.health, self.armour
     
-    def survival_of_the_fittest(self, other_orc, enemy_list):
+    def survival_of_the_fittest(self, orc_list, enemy_list):
         health_damage = 50
         armour_damage = 50
-        other_orc.damage_taken(enemy_list, health_damage, armour_damage)
-        return "Infighting has broken out between the orcs and {} has killed his brother".format(self.name)
-        # print rather than return?
+        for i in orc_list:
+            if i == self:
+                continue
+            else:
+                i.damage_taken(health_damage, armour_damage)
+        print("Infighting has broken out between the orcs")
+        return i.information(enemy_list, orc_list)
 
-    def information(self):
+    def information(self, enemy_list, orc_list):
         if self.health <= 0:
-            return "The {} is dead".format(self.name)
+            enemy_list.remove(self)
+            orc_list.remove(self)
+            return "{} is dead".format(self.name)
         return self.health, self.armour
 
-    def attack_choice(self, orc_num):
+    def attack_choice(self, orc_list, enemy_list):
         num = random.randint(1,12)
-        if num > 9 and orc_num > 1:
-            outcome = self.survival_of_the_fittest()
+        if num > 9 and len(orc_list) > 1:
+            outcome = self.survival_of_the_fittest(orc_list, enemy_list)
             return outcome
         else:
             outcome = self.main_attack()
