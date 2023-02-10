@@ -67,7 +67,7 @@ class soldier:
         self.health = self.original_health
         self.armour = self.original_armour
         self.current_level = self.current_level + 1
-        print("You are now level {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
+        print("You are now rank {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
 
 class mage:
     def __init__(self, name):
@@ -94,6 +94,7 @@ class mage:
         for i in enemy_list:
             i.damage_taken(health_damage, armour_damage)
         return 0,0
+        # - returning any value above 0 causes issues as that is applied on top of looping damage
 
     def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
@@ -137,13 +138,14 @@ class mage:
         self.health = self.original_health
         self.armour = self.original_armour
         self.current_level = self.current_level + 1
-        print("You are now level {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
+        print("You are now rank {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
 
 class goblin:
     def __init__(self, name, enemies_list):
         self.health = 25
         self.name = name
         enemies_list.append(self)
+        print("A goblin has appeared")
     
     def attack(self):
         health_damage = 25
@@ -163,7 +165,7 @@ class goblin:
         if self.health <= 0:
             enemy_list.remove(self)
             return "{} is dead".format(self.name)
-        return self.health
+        return "{} has {} health and {} remaining".format(self.name, self.health, self.armour)
 
 class troll:
     def __init__(self, name, enemies_list):
@@ -171,6 +173,7 @@ class troll:
         self.armour = 50
         self.name = name
         enemies_list.append(self)
+        print("A troll has appeared")
     
     def main_attack(self):
         health_damage = 30
@@ -204,8 +207,8 @@ class troll:
     def information(self, enemy_list):
         if self.health <= 0:
             enemy_list.remove(self)
-            return "The {} is dead".format(self.name)
-        return self.health, self.armour
+            return "{} is dead".format(self.name)
+        return "{} has {} health and {} remaining".format(self.name, self.health, self.armour)
 
     def attack_choice(self):
         if self.health < 30:
@@ -226,6 +229,7 @@ class orc:
         self.name = name
         enemies_list.append(self)
         orc_list.append(self)
+        print("An orc has appeared")
 
     def main_attack(self):
         health_damage = 35
@@ -267,7 +271,7 @@ class orc:
             enemy_list.remove(self)
             orc_list.remove(self)
             return "{} is dead".format(self.name)
-        return self.health, self.armour
+        return "{} has {} health and {} remaining".format(self.name, self.health, self.armour)
 
     def attack_choice(self, orc_list, enemy_list):
         num = random.randint(1,12)

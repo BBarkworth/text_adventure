@@ -140,6 +140,7 @@ class Testclasses(unittest.TestCase):
         self.assertEqual(test_orc.information(enemy_list, list_of_orcs), (10,40))
         self.assertEqual(test_goblin.information(enemy_list), "{} is dead".format(test_goblin.name))
         self.assertEqual(second_troll.information(enemy_list), (35,40))
+        # more tests
     
     def test_orc(self):
         enemy_list = []
