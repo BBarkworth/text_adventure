@@ -141,11 +141,13 @@ class mage:
         print("You are now rank {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
 
 class goblin:
-    def __init__(self, name, enemies_list):
+    def __init__(self, enemies_list):
         self.health = 25
-        self.name = name
         enemies_list.append(self)
         print("A goblin has appeared")
+
+    def __repr__(self):
+        return 'goblin'
     
     def attack(self):
         health_damage = 25
@@ -164,16 +166,18 @@ class goblin:
     def information(self, enemy_list):
         if self.health <= 0:
             enemy_list.remove(self)
-            return "{} is dead".format(self.name)
-        return "{} has {} health and {} remaining".format(self.name, self.health, self.armour)
+            return "The goblin is dead"
+        return "The goblin has {} health remaining".format(self.health)
 
 class troll:
-    def __init__(self, name, enemies_list):
+    def __init__(self, enemies_list):
         self.health = 75
         self.armour = 50
-        self.name = name
         enemies_list.append(self)
         print("A troll has appeared")
+
+    def __repr__(self):
+        return 'troll'
     
     def main_attack(self):
         health_damage = 30
@@ -207,8 +211,8 @@ class troll:
     def information(self, enemy_list):
         if self.health <= 0:
             enemy_list.remove(self)
-            return "{} is dead".format(self.name)
-        return "{} has {} health and {} remaining".format(self.name, self.health, self.armour)
+            return "The troll is dead"
+        return "The troll has {} health and {} remaining".format(self.health, self.armour)
 
     def attack_choice(self):
         if self.health < 30:
@@ -223,13 +227,15 @@ class troll:
         return outcome
 
 class orc:
-    def __init__(self, name, enemies_list, orc_list):
+    def __init__(self, enemies_list, orc_list):
         self.health = 50
         self.armour = 50
-        self.name = name
         enemies_list.append(self)
         orc_list.append(self)
         print("An orc has appeared")
+
+    def __repr__(self):
+        return 'orc'
 
     def main_attack(self):
         health_damage = 35
@@ -270,8 +276,8 @@ class orc:
         if self.health <= 0:
             enemy_list.remove(self)
             orc_list.remove(self)
-            return "{} is dead".format(self.name)
-        return "{} has {} health and {} remaining".format(self.name, self.health, self.armour)
+            return "The orc is dead"
+        return "The orc has {} health and {} remaining".format(self.health, self.armour)
 
     def attack_choice(self, orc_list, enemy_list):
         num = random.randint(1,12)
