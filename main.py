@@ -18,32 +18,17 @@ def player_choice():
         print("You're playing as a soldier because you didn't pick one of the class options")
     return player
 
-def enemy_spawn(counter, list_of_enemies, level_enemy_number):
-    if len(list_of_enemies) > 5:
-        return 0
-    enemy_list = ["goblin", "troll", "orc"]
-    if counter == 0:
-        enemy = random.choices(enemy_list, weights=(40,25,35), k = 2)
-        for i in range(len(enemy)):
-            if enemy[i] == "goblin":
-                goblin("enemy_{}".format(counter))
-            elif enemy[i] == "troll":
-                troll("enemy_{}".format(counter))
-            else:
-                orc("enemy_{}".format(counter))
-            counter += 1
-    elif counter >= (level_enemy_number):
-        return counter
-    else:
-        enemy = random.choices(enemy_list, weights=(40,25,35), k = 1)
-        if enemy == "goblin":
-            goblin("enemy_{}".format(counter))
-        elif enemy == "troll":
-            troll("enemy_{}".format(counter))
+def enemy_spawn(level_enemy_number):
+    enemies_list = ["goblin", "troll", "orc"]
+    for i in range(len(level_enemy_number)):
+        enemy = random.choices(enemies_list, weights=(40,25,35), k = 1)
+        if enemy[i] == "goblin":
+            goblin(enemy_list)
+        elif enemy[i] == "troll":
+            troll(enemy_list)
         else:
-            orc("enemy_{}".format(counter))
-        counter += 1
-    return counter
+            orc(enemy_list, orc_list)
+        time.sleep(1.5)
 
 if __name__=='__main__':
     player = player_choice()
@@ -51,7 +36,7 @@ if __name__=='__main__':
     orc_list = []
 
     time.sleep(1)
-    goblin_one = goblin("Goblin soldier", enemy_list)
+    goblin_one = goblin(enemy_list)
     print("Look out, a goblin soldier has appeared")
     time.sleep(1.5)
     while goblin_one.health > 0:
@@ -73,7 +58,7 @@ if __name__=='__main__':
         if player.health <= 0:
             break
         print(player.information())
-    troll_one = troll("Cave troll", enemy_list)
+    troll_one = troll(enemy_list)
     print("A cave troll has awoken from its slumber")
     time.sleep(1.5)
     while troll_one.health > 0:
@@ -110,17 +95,19 @@ if __name__=='__main__':
         print("Game Over")
 
     counter = 0
-    level_enemy_number = 5
-    while player.health > 0:
-        counter = enemy_spawn(counter, enemy_list, level_enemy_number)
-        # moves variable - 1 move for each side or 1 move for player + enemy? - each move could just be the actions in a loop iteration?
-        # how to end level? - death indicator? - add to enemy information method and comapre variable with level_enemy_number to indicate level end?
+    level_enemies = 5
+    while len(enemy_list) > 0:
+        new_level = enemy_spawn(level_enemies)
 
+        # moves variable - 1 move for each side or 1 move for player + enemy? - each move could just be the actions in a loop iteration?
+        # fight with enemy_list item i.e. individual enemy and vice_versa?
+        # how to end level? - death indicator? - add to enemy information method and compare variable/method output with level_enemy_number to indicate level end?
+
+# change spawn so everything spawns in at once and then move check can be if any enemies are left - combine with player choosing what enemy to attack?
+# add death method for enemies to make all attacks 0 if health is 0?
 
 # add multiple players option - player list and loop?
-# put main script in try/except statement to loop back for multi playthroughs?
 # fancy writing libraries/wrappers?
-# fight with enemy_list item and vice_versa?
 
 # change health damage - increase it or force armour to be 0 as well for death? - maybe just trolls die from health damage?
 # could keep the dice roll separate as a function as then it could be passed in as a parameter - should stop test fails, 'dice' would have to be rolled/called every turn before choice option so it can be passed in if necessary
