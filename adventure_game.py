@@ -1,5 +1,3 @@
-import random
-
 class soldier:
     def __init__(self, name):
         self.health = 100
@@ -12,10 +10,9 @@ class soldier:
     def __repr__(self):
         return 'soldier'
     
-    def quick_attack(self):
+    def quick_attack(self, num):
         health_damage = 40
         armour_damage = 0
-        num = random.randint(1,12)
         if num > 6:
             return health_damage * 2, armour_damage
         return health_damage, armour_damage
@@ -50,11 +47,11 @@ class soldier:
         return "You have {} health and {} armour remaining".format(self.health, self.armour)
 
     def attack_information(self):
-        return "Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 25 health damage and 25 armour damage"
+        return "Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 35 health damage and 25 armour damage"
 
-    def attack_choice(self, choice, enemy_list):
+    def attack_choice(self, choice, enemy_list, num):
         if choice == "1":
-            outcome = self.quick_attack()
+            outcome = self.quick_attack(num)
         elif choice == "2":
             outcome = self.power_attack()
         else:
@@ -94,12 +91,12 @@ class mage:
         for i in enemy_list:
             i.damage_taken(health_damage, armour_damage)
         return 0,0
-        # - returning any value above 0 causes issues as that is applied on top of looping damage
+        # returning any value above 0 causes issues as that is applied on top of looping damage
 
     def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
             raise ValueError
-        self.health = self.health - (num * 1.5)
+        self.health = self.health - (num * 1.25)
         if armour_num > 0:
             if armour_num > self.armour:
                 self.armour -= armour_num
@@ -123,7 +120,7 @@ class mage:
     def attack_information(self):
         return "Your magic attack does 100 health damage and 20 armour damage, whereas, the splash damage attack does 40 health damage and 10 armour damage for each enemy"
 
-    def attack_choice(self, choice, enemy_list):
+    def attack_choice(self, choice, enemy_list, num = 0):
         if choice == "1":
             outcome = self.magic_attack()
         elif choice == "2":
@@ -144,14 +141,18 @@ class goblin:
     def __init__(self, enemies_list):
         self.health = 25
         enemies_list.append(self)
-        print("A goblin has appeared")
 
     def __repr__(self):
         return 'goblin'
     
     def attack(self):
         health_damage = 25
-        return health_damage
+        armour_damage = 0
+        return health_damage, armour_damage
+    
+    def attack_choice(self, num = 0, orc_list = 0, enemy_list = 0):
+        outcome = self.attack()
+        return outcome
 
     def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
@@ -163,7 +164,7 @@ class goblin:
             return 0
         return self.health
 
-    def information(self, enemy_list):
+    def information(self, enemy_list, orc_list):
         if self.health <= 0:
             enemy_list.remove(self)
             return "The goblin is dead"
@@ -174,7 +175,6 @@ class troll:
         self.health = 75
         self.armour = 50
         enemies_list.append(self)
-        print("A troll has appeared")
 
     def __repr__(self):
         return 'troll'
@@ -208,15 +208,14 @@ class troll:
             return 0
         return self.health, self.armour
 
-    def information(self, enemy_list):
+    def information(self, enemy_list, orc_list):
         if self.health <= 0:
             enemy_list.remove(self)
             return "The troll is dead"
-        return "The troll has {} health and {} remaining".format(self.health, self.armour)
+        return "The troll has {} health and {} armour remaining".format(self.health, self.armour)
 
-    def attack_choice(self):
+    def attack_choice(self, num, orc_list = 0, enemy_list = 0):
         if self.health < 30:
-            num = random.randint(1,12)
             if num > 6: 
                 outcome = self.close_to_death()
                 return outcome
@@ -232,7 +231,6 @@ class orc:
         self.armour = 50
         enemies_list.append(self)
         orc_list.append(self)
-        print("An orc has appeared")
 
     def __repr__(self):
         return 'orc'
@@ -269,18 +267,17 @@ class orc:
                 continue
             else:
                 i.damage_taken(health_damage, armour_damage)
-        print("Infighting has broken out between the orcs")
-        return i.information(enemy_list, orc_list)
+            print("Infighting has broken out between the orcs")
+            return i.information(enemy_list, orc_list)
 
     def information(self, enemy_list, orc_list):
         if self.health <= 0:
             enemy_list.remove(self)
             orc_list.remove(self)
             return "The orc is dead"
-        return "The orc has {} health and {} remaining".format(self.health, self.armour)
+        return "The orc has {} health and {} armour remaining".format(self.health, self.armour)
 
-    def attack_choice(self, orc_list, enemy_list):
-        num = random.randint(1,12)
+    def attack_choice(self, num, orc_list, enemy_list):
         if num > 9 and len(orc_list) > 1:
             outcome = self.survival_of_the_fittest(orc_list, enemy_list)
             return outcome
