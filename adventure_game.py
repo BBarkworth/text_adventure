@@ -64,7 +64,7 @@ class soldier:
         self.health = self.original_health
         self.armour = self.original_armour
         self.current_level = self.current_level + 1
-        print("You are now rank {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
+        return "You are now rank {} with {} health and {} armour".format(self.current_level, self.health, self.armour)
 
 class mage:
     def __init__(self, name):
@@ -90,8 +90,8 @@ class mage:
         armour_damage = 10
         for i in enemy_list:
             i.damage_taken(health_damage, armour_damage)
-        return 0,0
         # returning any value above 0 causes issues as that is applied on top of looping damage
+        return 0,0
 
     def damage_taken(self, num, armour_num=0):
         if num < 0 or armour_num < 0:
@@ -135,7 +135,7 @@ class mage:
         self.health = self.original_health
         self.armour = self.original_armour
         self.current_level = self.current_level + 1
-        print("You are now rank {} with {} health and {} armour".format(self.current_level, self.health, self.armour))
+        return "You are now rank {} with {} health and {} armour".format(self.current_level, self.health, self.armour)
 
 class goblin:
     def __init__(self, enemies_list):
