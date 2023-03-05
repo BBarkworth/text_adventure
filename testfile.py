@@ -20,9 +20,14 @@ class Testclasses(unittest.TestCase):
         self.assertEqual(test_soldier.damage_taken(0, 20), (100,30))
         self.assertEqual(test_soldier.damage_taken(0, 50), (80,0))
         self.assertEqual(test_soldier.information(), "You have 80 health and 0 armour remaining")
-        self.assertEqual(test_soldier.damage_taken(0, 80), "Game Over")
-        self.assertEqual(test_soldier.attack_choice("2", enemy_list), (test_soldier.power_attack()))
-        self.assertEqual(test_soldier.attack_choice("3", enemy_list), (test_soldier.attack_information()))
+        self.assertEqual(test_soldier.damage_taken(0, 75), (5,0))
+        self.assertEqual(test_soldier.attack_choice("1", enemy_list, 1), (test_soldier.quick_attack(1)))
+        self.assertEqual(test_soldier.attack_choice("2", enemy_list, 1), (test_soldier.power_attack()))
+        self.assertEqual(test_soldier.attack_choice("3", enemy_list, 1), (test_soldier.attack_information()))
+        self.assertEqual(test_soldier.attack_information(), "Your quick attack does 40 health damage with a random chance of being activated again, whereas, the power attack does 35 health damage and 25 armour damage")
+        test_soldier2 = soldier("test_soldier")
+        self.assertEqual(test_soldier2.level_up(), "You are now rank 2 with 125 health and 75 armour")
+        self.assertEqual(test_soldier2.level_up(), "You are now rank 3 with 150 health and 100 armour")
     
     def test_input(self):
         enemy_list = []
