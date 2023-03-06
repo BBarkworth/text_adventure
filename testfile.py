@@ -40,8 +40,6 @@ class Testclasses(unittest.TestCase):
             test_mage.damage_taken(-20, 0)
         with self.assertRaises(ValueError):
             test_mage.splash_damage_attack(enemy_list)
-        with self.assertRaises(ValueError):
-            test_mage.splash_damage_attack(enemy_list)
         test_goblin = goblin(enemy_list)
         test_troll = troll(enemy_list)
         with self.assertRaises(ValueError):
@@ -57,14 +55,18 @@ class Testclasses(unittest.TestCase):
         with self.assertRaises(ValueError):
             test_troll.damage_taken(50, -20)
         test_orc = orc(enemy_list, orc_num)
+        test_orc2 = orc(enemy_list, orc_num)
         with self.assertRaises(ValueError):
             test_orc.damage_taken(-5, 0)
         with self.assertRaises(ValueError):
             test_orc.damage_taken(50, -5)
         with self.assertRaises(ValueError):
             test_orc.damage_taken(0, -43)
-        # type errors/ input checks?
-        # check value error through info method for orc killed by survival
+        self.assertEqual(test_orc.survival_of_the_fittest(orc_num, enemy_list), "The orc is dead")
+        with self.assertRaises(ValueError):
+            test_orc2.information(orc_num, enemy_list)
+        with self.assertRaises(TypeError):
+            test_orc.damage_taken("1", "death")
 
     def test_mage(self):
         list_test = []
@@ -88,13 +90,19 @@ class Testclasses(unittest.TestCase):
         self.assertEqual(test_mage.damage_taken(25,10), (18.75,10))
         self.assertEqual(test_mage.information(), "You have 18.75 health and 10 armour remaining")
         self.assertEqual(test_mage.damage_taken(5,15), (7.5,0))
+    
+    def test_non_attack_methods(self):
+        list_test = []
         test_mage2 = mage("mage_two")
+        test_goblin = goblin(list_test)
         self.assertEqual(test_mage2.damage_taken(0,15),(50,5))
         self.assertEqual(test_mage2.information(), "You have 50.0 health and 5 armour remaining")
-        self.assertEqual(test_mage2.damage_taken(0,55), "Game Over")
-        self.assertEqual(test_mage2.attack_choice("1", list_test), test_mage.magic_attack())
-        self.assertEqual(test_mage2.attack_choice("2", list_test), test_mage.splash_damage_attack(list_test))
-        self.assertEqual(test_mage2.attack_choice("3", list_test), test_mage.attack_information())
+        self.assertEqual(test_mage2.level_up(),("You are now rank 2 with 75 health and 45 armour"))
+        self.assertEqual(test_mage2.damage_taken(65,55), "Game Over")
+        self.assertEqual(test_mage2.attack_choice("1", list_test), test_mage2.magic_attack())
+        self.assertEqual(test_mage2.attack_choice("2", list_test), test_mage2.splash_damage_attack(list_test))
+        self.assertEqual(test_mage2.attack_choice("3", list_test), test_mage2.attack_information())
+        self.assertEqual(test_mage2.attack_information(), "Your magic attack does 100 health damage and 20 armour damage, whereas, the splash damage attack does 40 health damage and 10 armour damage for each enemy")
 
     def test_goblin(self): 
         enemy_list = []
@@ -109,12 +117,13 @@ class Testclasses(unittest.TestCase):
         self.assertEqual(test_goblin.damage_taken(10,0), 0) 
         test_goblin = goblin(enemy_list)
         self.assertEqual(test_goblin.damage_taken(0,25), 0) 
+        self.assertEqual(test_goblin.attack_choice(),test_goblin.attack())
         
     def test_troll(self):  
         enemy_list = []
         orc_list = []
         test_troll = troll(enemy_list)
-        self.assertEqual(test_troll.damage_taken(50, 10), (25, 40))
+        self.assertEqual(test_troll.damage_taken(50, 10), (25,40))
         for j in range(1,13):
             if test_troll.health < 30:
                 if j < 7:
@@ -123,13 +132,14 @@ class Testclasses(unittest.TestCase):
                     self.assertEqual(test_troll.attack_choice(j, orc_list, enemy_list), test_troll.close_to_death())
         self.assertEqual(test_troll.main_attack(), (30, 25))
         self.assertEqual(test_troll.information(enemy_list, orc_list), 'The troll has 25 health and 40 armour remaining')
-        self.assertEqual(test_troll.damage_taken(0, 50), (15, 0))
+        self.assertEqual(test_troll.damage_taken(0, 50), (15,0))
         self.assertEqual(test_troll.damage_taken(0, 15), 0)
         test_troll = troll(enemy_list)        
         self.assertEqual(test_troll.damage_taken(75,0), 0)
         test_troll = troll(enemy_list) 
-        self.assertEqual(test_troll.damage_taken(30, 50), (45, 0))
-        self.assertEqual(test_troll.damage_taken(25,0), (20, 0))
+        self.assertEqual(test_troll.damage_taken(30, 50), (45,0))
+        self.assertEqual(test_troll.damage_taken(25,0), (20,0))
+        self.assertEqual(test_troll.close_to_death(), (50,10))
     
     def test_interactions(self):
         enemy_list = []
@@ -148,7 +158,15 @@ class Testclasses(unittest.TestCase):
         self.assertEqual(test_orc.information(enemy_list, list_of_orcs), 'The orc has 10 health and 40 armour remaining')
         self.assertEqual(test_goblin.information(enemy_list, list_of_orcs), "The goblin is dead")
         self.assertEqual(second_troll.information(enemy_list, list_of_orcs), 'The troll has 35 health and 40 armour remaining')
-        # more tests
+        self.assertEqual(second_troll.damage_taken(test_soldier.quick_attack(5)[0], test_soldier.quick_attack(5)[1]), (0))
+        self.assertEqual(second_troll.information(enemy_list, list_of_orcs), 'The troll is dead')
+        self.assertEqual(test_orc.damage_taken(test_mage.magic_attack()[0], test_mage.magic_attack()[1]), 0)
+        self.assertEqual(test_orc.information(enemy_list, list_of_orcs), 'The orc is dead')
+        self.assertEqual(test_mage.damage_taken(test_troll.close_to_death()[0], test_troll.close_to_death()[1]), "Game Over")
+        self.assertEqual(test_soldier.damage_taken(test_troll.main_attack()[0], test_troll.main_attack()[1]), (45,25))
+        second_orc = orc(enemy_list, list_of_orcs)
+        third_orc = orc(enemy_list, list_of_orcs)
+        self.assertEqual(second_orc.survival_of_the_fittest(list_of_orcs, enemy_list), 'The orc is dead')
     
     def test_orc(self):
         enemy_list = []
