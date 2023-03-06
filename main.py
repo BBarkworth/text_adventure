@@ -79,7 +79,7 @@ if __name__=='__main__':
             break
         time.sleep(1.5)
         print(player.information())
-        
+
     # end of loop conditionals
     if player.health > 0:
         print("You were victorious but this was only the tutorial")
@@ -120,6 +120,7 @@ if __name__=='__main__':
         player_attack = player.attack_choice(choice, enemy_list, roll)
         # list enemies 
         for j in enemy_list:
+            time.sleep(1)
             print(j)
         # splash damage attack conditional
         if player_attack == (0, 0):
@@ -137,6 +138,7 @@ if __name__=='__main__':
             for k in copy_list:
                 if enemy_choice == str(k):
                     k.damage_taken(player_attack[0], player_attack[1])
+                    time.sleep(1)
                     print(k.information(enemy_list, orc_list))
                     break
         time.sleep(2.5)
@@ -164,8 +166,9 @@ if __name__=='__main__':
             # health and armour information for plaer
             print(player.information())
     # print statements for the end of the game
+    time.sleep(1)
     tprint("You were slain", font="slant")
-    time.sleep(1.5)
+    time.sleep(2)
     tprint("Game over", font="slant")
-    time.sleep(1.5)
+    time.sleep(2)
     tprint("You reached level {}".format(player.current_level), font="slant")
