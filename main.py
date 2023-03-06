@@ -79,6 +79,7 @@ if __name__=='__main__':
             break
         time.sleep(1.5)
         print(player.information())
+        
     # end of loop conditionals
     if player.health > 0:
         print("You were victorious but this was only the tutorial")
@@ -168,5 +169,3 @@ if __name__=='__main__':
     tprint("Game over", font="slant")
     time.sleep(1.5)
     tprint("You reached level {}".format(player.current_level), font="slant")
-
-    # finish tests
